@@ -16,4 +16,8 @@
     <string name="copied">Copied</string>
     <string name="apply_flag">Apply test flag (show FPS)</string>
     <string name="remove_flag">Remove flag file</string>
+    <string name="tab_main">Main</string>
+    <string name="tab_flags">FastFlags</string>
+    <string name="tab_mods">Modloader</string>
+    <string name="tab_other">Other</string>
 </resources>

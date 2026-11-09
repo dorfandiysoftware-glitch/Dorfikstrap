@@ -16,4 +16,8 @@
     <string name="copied">Скопійовано</string>
     <string name="apply_flag">Тест: показати FPS</string>
     <string name="remove_flag">Видалити файл прапорів</string>
+    <string name="tab_main">Основна</string>
+    <string name="tab_flags">FastFlags</string>
+    <string name="tab_mods">Modloader</string>
+    <string name="tab_other">Інше</string>
 </resources>
