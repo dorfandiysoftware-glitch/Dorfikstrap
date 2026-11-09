@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dorfikstrap</string>
+    <string name="grant">Allow Shizuku</string>
+    <string name="run_diag">Run diagnostics</string>
+    <string name="copy">Copy report</string>
+    <string name="share">Share report</string>
+    <string name="st_not_running">Shizuku is not running. Start it (Wireless debugging or ADB) and come back.</string>
+    <string name="st_not_installed">Shizuku is not installed or not started.</string>
+    <string name="st_need_permission">Shizuku is running. Tap “Allow Shizuku”.</string>
+    <string name="st_ready">Shizuku is ready.</string>
+    <string name="st_roblox">Roblox: %1$s</string>
+    <string name="installed">installed</string>
+    <string name="not_installed">not installed</string>
+    <string name="running">Running…</string>
+    <string name="copied">Copied</string>
+</resources>

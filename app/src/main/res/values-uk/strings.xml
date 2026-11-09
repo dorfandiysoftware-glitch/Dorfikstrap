@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dorfikstrap</string>
+    <string name="grant">Дозволити Shizuku</string>
+    <string name="run_diag">Запустити діагностику</string>
+    <string name="copy">Копіювати звіт</string>
+    <string name="share">Поділитись звітом</string>
+    <string name="st_not_running">Shizuku не запущено. Запусти його (бездротове налагодження або ADB) і повернись.</string>
+    <string name="st_not_installed">Shizuku не встановлено або не запущено.</string>
+    <string name="st_need_permission">Shizuku працює. Натисни «Дозволити Shizuku».</string>
+    <string name="st_ready">Shizuku готовий.</string>
+    <string name="st_roblox">Roblox: %1$s</string>
+    <string name="installed">встановлено</string>
+    <string name="not_installed">не встановлено</string>
+    <string name="running">Виконується…</string>
+    <string name="copied">Скопійовано</string>
+</resources>
