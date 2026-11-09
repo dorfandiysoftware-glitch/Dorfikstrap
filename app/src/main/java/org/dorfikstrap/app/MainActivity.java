@@ -21,6 +21,7 @@ import rikka.shizuku.Shizuku;
 public class MainActivity extends AppCompatActivity {
     private static final int REQ = 1;
     private static final String PKG = "com.roblox.client";
+    private static final String F = "/data/local/tmp/ClientAppSettings.json";
 
     private TextView status, report;
     private volatile boolean busy;
@@ -50,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         findViewById(R.id.run).setOnClickListener(v -> runDiag());
+        findViewById(R.id.apply).setOnClickListener(v -> runShell(
+                "echo '{\"FFlagDebugDisplayFPS\":\"true\"}' > " + F + " && chmod 644 " + F
+                        + " && ls -la " + F + " && cat " + F));
+        findViewById(R.id.remove).setOnClickListener(v -> runShell(
+                "rm -f " + F + "; ls -la /data/local/tmp | head -30"));
         findViewById(R.id.copy).setOnClickListener(v -> {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             cm.setPrimaryClip(ClipData.newPlainText("report", report.getText()));
@@ -133,6 +139,22 @@ public class MainActivity extends AppCompatActivity {
         return sb.append('\n').toString();
     }
 
+    private void runShell(String cmd) {
+        if (busy) return;
+        if (!ready()) {
+            refresh();
+            return;
+        }
+        busy = true;
+        new Thread(() -> {
+            final String res = exec(cmd) + "Force-stop Roblox and start it again, then run diagnostics.\n";
+            runOnUiThread(() -> {
+                report.setText(res);
+                busy = false;
+            });
+        }).start();
+    }
+
     private void runDiag() {
         if (busy) return;
         if (!ready()) {
@@ -162,7 +184,8 @@ public class MainActivity extends AppCompatActivity {
                 "ps -A | grep -i roblox",
                 "dumpsys package " + PKG + " | grep -iE 'backup|extractNative|primaryCpuAbi|installerPackageName|firstInstallTime|lastUpdateTime'",
                 "logcat -d -b main,system,crash -t 3000 | grep -iE 'roblox|rbx' | tail -80",
-                "logcat -d -b all | grep -iE 'FLog|FFlag|ClientSettings|ClientAppSettings' | tail -40",
+                "ls -la /data/local/tmp",
+                "logcat -d -b all | grep -iE 'readLocalSettings|ClientAppSettings|DisplayFPS' | tail -20",
         };
         new Thread(() -> {
             StringBuilder out = new StringBuilder();

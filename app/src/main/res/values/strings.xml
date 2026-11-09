@@ -14,4 +14,6 @@
     <string name="not_installed">not installed</string>
     <string name="running">Running…</string>
     <string name="copied">Copied</string>
+    <string name="apply_flag">Apply test flag (show FPS)</string>
+    <string name="remove_flag">Remove flag file</string>
 </resources>

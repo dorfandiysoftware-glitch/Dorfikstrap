@@ -14,4 +14,6 @@
     <string name="not_installed">не встановлено</string>
     <string name="running">Виконується…</string>
     <string name="copied">Скопійовано</string>
+    <string name="apply_flag">Тест: показати FPS</string>
+    <string name="remove_flag">Видалити файл прапорів</string>
 </resources>
