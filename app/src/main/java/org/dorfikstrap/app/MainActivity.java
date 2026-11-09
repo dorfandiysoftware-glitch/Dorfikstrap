@@ -156,6 +156,13 @@ public class MainActivity extends AppCompatActivity {
                 "ls -la /data/user/0/" + PKG,
                 "ls -la /data/user/0/" + PKG + "/files",
                 "find /data/user/0/" + PKG + " -maxdepth 3 \\( -iname '*setting*' -o -iname '*flag*' -o -iname '*.json' \\) | head -60",
+                "ls /sdcard/Android/data | head -80",
+                "find /sdcard -maxdepth 4 -iname '*roblox*' 2>/dev/null | head -40",
+                "ls -la /sdcard/Android/media/" + PKG,
+                "ps -A | grep -i roblox",
+                "dumpsys package " + PKG + " | grep -iE 'backup|extractNative|primaryCpuAbi|installerPackageName|firstInstallTime|lastUpdateTime'",
+                "logcat -d -b main,system,crash -t 3000 | grep -iE 'roblox|rbx' | tail -80",
+                "logcat -d -b all | grep -iE 'FLog|FFlag|ClientSettings|ClientAppSettings' | tail -40",
         };
         new Thread(() -> {
             StringBuilder out = new StringBuilder();
