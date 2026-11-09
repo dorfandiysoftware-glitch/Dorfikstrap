@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
     private MaterialButton button(String s, View.OnClickListener l, boolean tonal) {
         MaterialButton b = new MaterialButton(this, null, tonal
-                ? com.google.android.material.R.attr.materialButtonTonalStyle
+                ? com.google.android.material.R.attr.materialButtonOutlinedStyle
                 : com.google.android.material.R.attr.materialButtonStyle);
         b.setText(s);
         b.setOnClickListener(l);
