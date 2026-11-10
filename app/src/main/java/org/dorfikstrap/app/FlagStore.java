@@ -78,8 +78,38 @@ final class FlagStore {
         return o.toString();
     }
 
+    boolean master() { return sp.getBoolean("master", true); }
+
+    void setMaster(boolean on) { sp.edit().putBoolean("master", on).apply(); }
+
+    int enabledCount() {
+        int n = 0;
+        for (Flag f : flags) if (f.enabled) n++;
+        return n;
+    }
+
+    /** Imports a JSON object of flags. Returns {added, skipped}, or null if the text is not a JSON object. */
+    int[] importJson(String text) {
+        try {
+            JSONObject o = new JSONObject(text.trim());
+            int ok = 0, bad = 0;
+            java.util.Iterator<String> it = o.keys();
+            while (it.hasNext()) {
+                String k = it.next();
+                Object v = o.get(k);
+                if (v instanceof JSONObject || v instanceof JSONArray || v == JSONObject.NULL) { bad++; continue; }
+                if (put(k, String.valueOf(v))) ok++; else bad++;
+            }
+            return new int[]{ok, bad};
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /** Shell command that writes the file. Values are validated, so single quotes cannot occur. */
     String writeCommand() {
+        if (!master() || enabledCount() == 0)
+            return "rm -f " + Sh.FLAGS_FILE + "; echo 'no flags: file removed'";
         return "printf '%s' '" + json() + "' > " + Sh.FLAGS_FILE + " && chmod 644 " + Sh.FLAGS_FILE
                 + " && cat " + Sh.FLAGS_FILE;
     }
