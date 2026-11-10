@@ -91,7 +91,13 @@ final class FlagStore {
     /** Imports a JSON object of flags. Returns {added, skipped}, or null if the text is not a JSON object. */
     int[] importJson(String text) {
         try {
-            JSONObject o = new JSONObject(text.trim());
+            String clean = text.replace("\uFEFF", "").trim();
+            if (clean.startsWith("```")) {
+                clean = clean.replaceFirst("^```[a-zA-Z]*", "");
+                if (clean.endsWith("```")) clean = clean.substring(0, clean.length() - 3);
+            }
+            clean = clean.trim().replaceAll(",\\s*([}\\]])", "$1"); // trailing commas
+            JSONObject o = new JSONObject(clean);
             int ok = 0, bad = 0;
             java.util.Iterator<String> it = o.keys();
             while (it.hasNext()) {
