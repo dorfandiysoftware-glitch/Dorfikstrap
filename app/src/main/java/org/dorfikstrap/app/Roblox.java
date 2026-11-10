@@ -14,7 +14,7 @@ final class Roblox {
 
     static void start(Activity a) {
         Intent i = a.getPackageManager().getLaunchIntentForPackage(Sh.PKG);
-        if (i == null) Toast.makeText(a, "Roblox is not installed", Toast.LENGTH_SHORT).show();
+        if (i == null) Toast.makeText(a, R.string.roblox_missing, Toast.LENGTH_SHORT).show();
         else a.startActivity(i);
     }
 
@@ -35,8 +35,10 @@ final class Roblox {
         }).start();
     }
 
+    private static String a_not_ready() { return "Shizuku is not ready"; }
+
     /** Writes the flag file only. Returns the shell output. */
     static String apply(FlagStore store) {
-        return Sh.ready() ? Sh.run(store.writeCommand()) : "Shizuku is not ready";
+        return Sh.ready() ? Sh.run(store.writeCommand()) : a_not_ready();
     }
 }

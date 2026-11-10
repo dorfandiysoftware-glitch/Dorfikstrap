@@ -49,6 +49,7 @@ public class LauncherActivity extends BaseActivity {
 
         ImageView logo = new ImageView(this);
         logo.setImageResource(R.drawable.ic_fg0);
+        logo.setBackgroundColor(android.graphics.Color.BLACK);
         logo.setClipToOutline(true);
         logo.setOutlineProvider(new ViewOutlineProvider() {
             @Override
@@ -62,18 +63,12 @@ public class LauncherActivity extends BaseActivity {
         title.setPadding(0, dp(12), 0, dp(20));
         col.addView(title);
 
-        col.addView(big(t("Launch Roblox", "Запуск Roblox"), false, v -> {
-            if (!Roblox.installed(this)) { toast(t("Roblox is not installed", "Roblox не встановлено")); return; }
-            if (!Sh.ready()) toast(t("Shizuku is not ready: launching without flags", "Shizuku не готовий: запуск без прапорів"));
+        col.addView(big(getString(R.string.launch_roblox), false, v -> {
+            if (!Roblox.installed(this)) { toast(getString(R.string.roblox_missing)); return; }
+            if (!Sh.ready()) toast(getString(R.string.no_shizuku_launch));
             Roblox.applyAndLaunch(this, store, true, null);
         }));
-        col.addView(big(t("Launch Roblox Studio", "Запуск Roblox Studio"), true, v ->
-                new MaterialAlertDialogBuilder(this)
-                        .setTitle("Roblox Studio")
-                        .setMessage(t("Roblox Studio exists only for Windows and macOS; there is no Android version. A port would need a Windows compatibility layer, which is a big research project. Not available yet.",
-                                "Roblox Studio існує лише для Windows і macOS, версії для Android немає. Порт потребував би шару сумісності з Windows, це окремий великий дослідницький проєкт. Поки недоступно."))
-                        .setPositiveButton(android.R.string.ok, null).show()));
-        col.addView(big(t("Settings", "Налаштування"), true, v ->
+        col.addView(big(getString(R.string.settings), true, v ->
                 startActivity(new Intent(this, SettingsActivity.class))));
 
         status = new TextView(this);
@@ -81,7 +76,7 @@ public class LauncherActivity extends BaseActivity {
         status.setGravity(Gravity.CENTER);
         col.addView(status);
         allow = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
-        allow.setText(t("Allow Shizuku", "Дозволити Shizuku"));
+        allow.setText(getString(R.string.allow_shizuku));
         allow.setOnClickListener(v -> {
             try {
                 if (Shizuku.pingBinder() && !Shizuku.isPreV11()) Shizuku.requestPermission(1);
@@ -138,13 +133,13 @@ public class LauncherActivity extends BaseActivity {
         boolean needAllow = false;
         try {
             if (!Shizuku.pingBinder())
-                s = t("Shizuku is not running. Start it to apply FastFlags.", "Shizuku не запущено. Запусти його, щоб застосовувати FastFlags.");
+                s = getString(R.string.shizuku_not_running);
             else if (Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
-                s = t("Shizuku needs permission.", "Shizuku потребує дозволу.");
+                s = getString(R.string.shizuku_needs_perm);
                 needAllow = true;
-            } else s = t("Shizuku is ready. Flags on: ", "Shizuku готовий. Прапорів увімкнено: ") + (store.master() ? store.enabledCount() : 0);
+            } else s = getString(R.string.shizuku_ready_flags, store.master() ? store.enabledCount() : 0);
         } catch (Throwable e) {
-            s = t("Shizuku is not installed.", "Shizuku не встановлено.");
+            s = getString(R.string.shizuku_not_installed);
         }
         status.setText(s);
         allow.setVisibility(needAllow ? View.VISIBLE : View.GONE);

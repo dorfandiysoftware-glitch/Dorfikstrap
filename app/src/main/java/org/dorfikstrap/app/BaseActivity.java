@@ -24,10 +24,5 @@ abstract class BaseActivity extends AppCompatActivity {
                 MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurface, Color.BLACK)));
     }
 
-    String t(String en, String uk) {
-        String lang = getResources().getConfiguration().getLocales().get(0).getLanguage();
-        return lang.equals("uk") ? uk : en;
-    }
-
     int dp(int v) { return Math.round(v * getResources().getDisplayMetrics().density); }
 }
