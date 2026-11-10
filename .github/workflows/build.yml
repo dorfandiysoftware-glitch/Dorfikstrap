@@ -19,6 +19,8 @@ jobs:
           gradle-version: '8.9'
       - name: Debug APK
         run: gradle :app:assembleDebug
+      - name: Release build check (minified)
+        run: gradle :app:assembleRelease
       - uses: actions/upload-artifact@v4
         with:
           name: Dorfikstrap-debug-apk
