@@ -194,6 +194,17 @@ public class SettingsActivity extends BaseActivity {
         LinearLayout.LayoutParams lp = top(8);
         lp.height = dp(60);
         l.addView(add, lp);
+        l.addView(button(t("Delete all FastFlags", "Видалити всі FastFlags"), false, v ->
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle(t("Delete all FastFlags?", "Видалити всі FastFlags?"))
+                        .setMessage(t("All flags in the list and the file in /data/local/tmp will be removed.",
+                                "Усі прапори зі списку і файл у /data/local/tmp буде видалено."))
+                        .setPositiveButton(t("Delete", "Видалити"), (d, w) -> {
+                            store.flags.clear();
+                            store.save();
+                            renderFlags();
+                            if (Sh.ready()) new Thread(() -> Sh.run("rm -f " + Sh.FLAGS_FILE)).start();
+                        }).setNegativeButton(android.R.string.cancel, null).show()), top(8));
         l.addView(body(t("Tap a flag to edit it, long-press to delete. Unknown flags are ignored by the client; Roblox may block some. Use at your own risk.",
                 "Натисни на прапор, щоб змінити, утримуй, щоб видалити. Невідомі клієнту прапори ігноруються; Roblox може блокувати частину. Ризик на тобі.")));
         flagList = new LinearLayout(this);
@@ -330,7 +341,56 @@ public class SettingsActivity extends BaseActivity {
         row(l, t("Change font", "Змінити шрифт"), false, false, null);
         row(l, t("Old character sounds", "Старі звуки персонажів"), false, false, null);
         row(l, t("Old skin-change background", "Старий фон зміни скіна"), false, false, null);
+
+        l.addView(title(t("Research", "Розвідка")));
+        l.addView(body(t("Looks for places outside Roblox's private folder that the client reads from (like the flag file), and shows how its content is packaged. Read-only; may take up to a minute.",
+                "Шукає місця поза приватною папкою Roblox, з яких клієнт читає файли (як файл прапорів), і показує, як упакований його контент. Лише читання; може тривати до хвилини.")));
+        TextView out = new TextView(this);
+        out.setTypeface(android.graphics.Typeface.MONOSPACE);
+        out.setTextSize(11);
+        out.setTextIsSelectable(true);
+        MaterialButton scan = button(t("Scan Roblox", "Сканувати Roblox"), true, v -> {
+            if (!Sh.ready()) { toast(t("Shizuku is not ready", "Shizuku не готовий")); return; }
+            scan(out);
+        });
+        l.addView(scan, top(8));
+        l.addView(button(t("Copy report", "Копіювати звіт"), false, v -> {
+            android.content.ClipboardManager cm = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            cm.setPrimaryClip(android.content.ClipData.newPlainText("report", out.getText()));
+            toast(t("Copied", "Скопійовано"));
+        }), top(8));
+        l.addView(out, top(8));
         return scroll(l);
+    }
+
+    private volatile boolean scanning;
+
+    private void scan(TextView out) {
+        if (scanning) return;
+        scanning = true;
+        out.setText(t("Scanning…", "Сканування…"));
+        new Thread(() -> {
+            String P = Sh.PKG;
+            String apks = Sh.run("pm path " + P + " | sed 's/package://'").trim();
+            StringBuilder sb = new StringBuilder();
+            sb.append(Sh.runLogged("pm path " + P));
+            sb.append(Sh.runLogged("ls -laR /sdcard/Android/data/" + P + " | head -60"));
+            sb.append(Sh.runLogged("ls -la /sdcard/Android/media/" + P));
+            for (String apk : apks.split("\\n")) {
+                apk = apk.trim();
+                if (apk.isEmpty()) continue;
+                sb.append(Sh.runLogged("unzip -l '" + apk + "' | tail -3"));
+                sb.append(Sh.runLogged("unzip -l '" + apk + "' | grep -iE 'content/|\\.(ttf|otf|ogg|mp3|rbxm|rbxl|json|ktx|png)$' | awk '{print $1, $4}' | sed -n '1,60p'"));
+                sb.append(Sh.runLogged("unzip -l '" + apk + "' | grep -E 'lib/arm64-v8a/.*\\.so'"));
+                // absolute paths and override-looking names embedded in native libraries
+                sb.append(Sh.runLogged("unzip -p '" + apk + "' 'lib/arm64-v8a/*.so' 2>/dev/null | grep -a -o -E '/(data|sdcard|storage|mnt)/[[:print:]]{3,70}' | sort -u | head -60"));
+                sb.append(Sh.runLogged("unzip -p '" + apk + "' 'lib/arm64-v8a/*.so' 2>/dev/null | grep -a -o -E '[[:print:]]{0,30}(ClientAppSettings|ContentOverride|content_override|AssetOverride|ExtraContent|PlatformContent)[[:print:]]{0,40}' | sort -u | head -40"));
+            }
+            sb.append(Sh.runLogged("logcat -d -b all | grep -iE 'open failed|ENOENT|FileNotFound' | grep -iE 'roblox|rbx' | tail -40"));
+            sb.append(Sh.runLogged("logcat -d -b all | grep -iE 'content|asset' | grep -iE 'rbx|Roblox' | grep -iE '/(data|sdcard|storage)' | tail -40"));
+            final String res = sb.toString();
+            runOnUiThread(() -> { out.setText(res); scanning = false; });
+        }).start();
     }
 
     // ---------- Appearance ----------
