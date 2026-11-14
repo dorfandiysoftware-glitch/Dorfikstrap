@@ -24,6 +24,8 @@ import rikka.shizuku.Shizuku;
 public class LauncherActivity extends BaseActivity {
     private TextView status;
     private MaterialButton allow;
+    private MaterialButton libre;
+    private boolean downloading;
     private FlagStore store;
 
     private final Shizuku.OnRequestPermissionResultListener permListener =
@@ -68,6 +70,8 @@ public class LauncherActivity extends BaseActivity {
             if (!Sh.ready()) toast(getString(R.string.no_shizuku_launch));
             Roblox.applyAndLaunch(this, store, true, null);
         }));
+        libre = big(getString(R.string.launch_libreblox), true, v -> onLibreBlox());
+        col.addView(libre);
         col.addView(big(getString(R.string.settings), true, v ->
                 startActivity(new Intent(this, SettingsActivity.class))));
 
@@ -109,6 +113,41 @@ public class LauncherActivity extends BaseActivity {
         lp.topMargin = dp(10);
         bt.setLayoutParams(lp);
         return bt;
+    }
+
+    private void onLibreBlox() {
+        if (LibreBlox.installed(this)) {
+            if (!LibreBlox.launch(this)) toast(getString(R.string.libreblox_failed, "launch"));
+            return;
+        }
+        if (downloading) return;
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.libreblox_missing_title)
+                .setMessage(R.string.libreblox_missing_msg)
+                .setPositiveButton(R.string.libreblox_download, (d, w) -> downloadLibreBlox())
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void downloadLibreBlox() {
+        if (!LibreBlox.ensureInstallPermission(this)) {
+            toast(getString(R.string.libreblox_allow_install));
+            return;
+        }
+        downloading = true;
+        final CharSequence label = libre.getText();
+        libre.setEnabled(false);
+        new Thread(() -> {
+            try {
+                java.io.File apk = LibreBlox.download(this, pc -> runOnUiThread(() ->
+                        libre.setText(getString(R.string.libreblox_downloading, pc))));
+                runOnUiThread(() -> LibreBlox.install(this, apk));
+            } catch (Throwable e) {
+                runOnUiThread(() -> toast(getString(R.string.libreblox_failed, String.valueOf(e.getMessage()))));
+            } finally {
+                runOnUiThread(() -> { downloading = false; libre.setEnabled(true); libre.setText(label); });
+            }
+        }).start();
     }
 
     private void toast(String s) { Toast.makeText(this, s, Toast.LENGTH_SHORT).show(); }

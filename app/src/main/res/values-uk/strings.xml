@@ -50,4 +50,11 @@
     <string name="shortcut_name">Назва ярлика</string>
     <string name="create_shortcut">Створити ярлик</string>
     <string name="no_pin_support">Твій лаунчер не підтримує закріплені ярлики</string>
+    <string name="launch_libreblox">Запустити LibreBlox</string>
+    <string name="libreblox_missing_title">LibreBlox не встановлено</string>
+    <string name="libreblox_missing_msg">LibreBlox — вільний переглядач ігор і людей Roblox. Завантажити останню версію з GitHub і встановити?</string>
+    <string name="libreblox_download">Завантажити</string>
+    <string name="libreblox_downloading">Завантаження… %1$d%%</string>
+    <string name="libreblox_allow_install">Дозвольте Dorfikstrap встановлювати застосунки й натисніть кнопку ще раз</string>
+    <string name="libreblox_failed">LibreBlox: %1$s</string>
 </resources>

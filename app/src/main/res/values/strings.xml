@@ -51,4 +51,11 @@
     <string name="shortcut_name">Shortcut name</string>
     <string name="create_shortcut">Create shortcut</string>
     <string name="no_pin_support">Your launcher does not support pinned shortcuts</string>
+    <string name="launch_libreblox">Launch LibreBlox</string>
+    <string name="libreblox_missing_title">LibreBlox is not installed</string>
+    <string name="libreblox_missing_msg">LibreBlox is a free viewer for Roblox experiences and people. Download the latest version from GitHub and install it?</string>
+    <string name="libreblox_download">Download</string>
+    <string name="libreblox_downloading">Downloading… %1$d%%</string>
+    <string name="libreblox_allow_install">Allow installing apps from Dorfikstrap, then press the button again</string>
+    <string name="libreblox_failed">LibreBlox: %1$s</string>
 </resources>
