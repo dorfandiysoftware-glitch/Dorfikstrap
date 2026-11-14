@@ -18,18 +18,30 @@ final class Roblox {
         else a.startActivity(i);
     }
 
+    /** Opens a roblox:// link in the Roblox app (only roblox:// links are accepted). */
+    static void startUri(Activity a, String uri) {
+        if (uri == null || !uri.startsWith("roblox://")) { start(a); return; }
+        Intent i = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(uri)).setPackage(Sh.PKG);
+        try { a.startActivity(i); } catch (Exception e) { start(a); }
+    }
+
     /**
      * Writes the flag file when Shizuku is ready, optionally force-stops Roblox so the flags are
      * re-read, then launches it. Without Shizuku Roblox is simply launched.
      */
     static void applyAndLaunch(Activity a, FlagStore store, boolean restart, Runnable done) {
+        applyAndLaunch(a, store, restart, null, done);
+    }
+
+    /** Same, but opens {@code uri} (a roblox:// deep link) instead of the Roblox home screen. */
+    static void applyAndLaunch(Activity a, FlagStore store, boolean restart, String uri, Runnable done) {
         new Thread(() -> {
             if (Sh.ready()) {
                 Sh.run(store.writeCommand());
                 if (restart) Sh.run("am force-stop " + Sh.PKG);
             }
             a.runOnUiThread(() -> {
-                start(a);
+                if (uri != null) startUri(a, uri); else start(a);
                 if (done != null) done.run();
             });
         }).start();

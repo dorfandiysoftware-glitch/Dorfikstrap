@@ -8,6 +8,7 @@ public class LaunchActivity extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        Roblox.applyAndLaunch(this, new FlagStore(this), true, this::finish);
+        String uri = getIntent() != null ? getIntent().getStringExtra("uri") : null;
+        Roblox.applyAndLaunch(this, new FlagStore(this), true, uri, this::finish);
     }
 }
