@@ -39,7 +39,8 @@ jobs:
       - name: Release APK
         run: gradle :app:assembleRelease
       - name: Rename
-        run: VER="${{ github.event.inputs.version }}"
+        run: |
+          VER="${{ github.event.inputs.version }}"
           [ -z "$VER" ] && VER="$GITHUB_REF_NAME"
           echo "VER=$VER" >> "$GITHUB_ENV"
           cp app/build/outputs/apk/release/app-release*.apk "Dorfikstrap-$VER.apk"
